@@ -42,12 +42,39 @@ Edit the trust relationship to add the `sub` field to the validation conditions.
 
 ```json{:copy}
 "Condition": {
-  "ForAllValues:StringEquals": {
+  "StringEquals": {
     "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
     "token.actions.githubusercontent.com:sub": "repo:octo-org/octo-repo:ref:refs/heads/octo-branch"
   }
 }
 ```
+
+Or use a `StringLike` condition for wildcard matching:
+
+```json{:copy}
+"Condition": {
+  "StringLike": {
+    "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
+    "token.actions.githubusercontent.com:sub": "repo:octo-org/octo-repo:ref:*"
+  }
+}
+```
+
+Additionally, you can edit the trust relationship to use a `ForAllValues:StringEquals` condition if you wish to allow for multiple valid `sub` values:
+
+```json{:copy}
+"Condition": {
+  "ForAllValues:StringEquals": {
+    "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
+    "token.actions.githubusercontent.com:sub": [
+      "repo:octo-org/octo-repo:ref:refs/heads/octo-branch",
+      "repo:octo-org/octo-repo:ref:refs/heads/other-octo-branch"
+    ]
+  }
+}
+```
+
+Note that when you use the ForAllValues condition operator, it returns true if there are no keys in the request, or if the key values resolve to a null data set, such as an empty string. See ["Creating a condition with multiple keys or values"](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_multi-value-conditions.html) for more information.
 
 ## Updating your {% data variables.product.prodname_actions %} workflow
 
